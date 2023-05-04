@@ -138,7 +138,17 @@ public class Controlador {
      */
     public void filtrarPedidosPendientes() throws IOException {
 
+        try{
+            factoryPedido1 dao = new factoryPedido1();
+            List<Pedido> list = dao.obtenerTodosPendienes();
+            for (Pedido a : list){
+                System.out.println(a.toString());
+            }
+        }catch(Exception ex){
+            System.out.println("Error en SQL2"+ex);
+        }
     }
+
 
 
     /**
@@ -149,8 +159,44 @@ public class Controlador {
      * @throws DAOException
      */
     public void crearPedido(String email) throws IOException, DAOException {
+        ClienteDao cliente = new factoryClientesDAO();
+        ArticuloDao articuloDao = new factoryArticuloDAO1();
 
+        try {
+            try{
+                if (cliente.obtener(email)!= null){
+                    System.out.println("Cliente existe");
+                    System.out.println("Introduzca el código del producto");
+                    String codigo = s.nextLine();
+                    try{
+                        if (articuloDao.obtener(codigo)!= null) {
+                            System.out.println("Introduzca la cantidad: ");
+                            int cantidad = s.nextInt();
+                            s.nextLine();
+                            Pedido pedido = new Pedido(cliente.obtener(email), articuloDao.obtener(codigo), cantidad);
+                            factoryPedido1 dao = new factoryPedido1();
+                            System.out.println("Pedido añadido!!");
+                            dao.insertar(pedido);
+                        }
+                    }catch (Exception ex){
+                        System.out.println("Error en el articulo "+ ex);
+                    }
+                }else{
+                    System.out.println("Cliente no existe");
+                    System.out.println("El cliente con correo electrónico " + email + " no existe.");
+                    System.out.println("Creando nuevo cliente...");
+                    GestionClientes gestionClientes = new GestionClientes();
+                    gestionClientes.datosCliente(this);
+                }
 
+            }catch (Exception ex){
+
+                System.out.println("Error en el registro: " + ex.getMessage());
+
+            }
+        } catch (Exception e) {
+            System.out.println("Error en el registro: " + e.getMessage());
+        }
     }
 
     /**
@@ -158,7 +204,28 @@ public class Controlador {
      * @param email
      * @throws IOException
      */
-    public void filtrarPedidosPendientesPorNombreCliente(String email) throws IOException {
+    public void filtrarPedidosPendientesPorNombreCliente(String email) throws IOException, DAOException {
+
+        ClienteDao cliente = new factoryClientesDAO();
+        if (cliente.obtener(email)!= null){
+            try{
+                factoryPedido1 dao = new factoryPedido1();
+                List<Pedido> list = dao.obtenerPendientesCliente(email);
+                if (list.isEmpty()){
+                    System.out.println("No existen pedidos pendientes para el cliente: "+cliente.obtener(email).getNombre());
+                }else {
+                    System.out.println("Pedidos pendientes para el cliente: "+cliente.obtener(email).getNombre());
+                    for (Pedido a : list){
+                        System.out.println(a.toString());
+                    }
+                }
+
+            }catch(Exception ex){
+                System.out.println("Error en SQL2"+ex);
+            }
+        }else {
+            System.out.println("El cliente no existe!!!");
+        }
 
     }
 
@@ -176,7 +243,16 @@ public class Controlador {
      * @throws IOException
      */
     public void filtrarPedidosEnviados () throws IOException {
-
+        try{
+            factoryPedido1 dao = new factoryPedido1();
+            List<Pedido> list = dao.obtenerTodosEnviados();
+            System.out.println("Pedidos enviados: ");
+            for (Pedido a : list){
+                System.out.println(a.toString());
+            }
+        }catch(Exception ex){
+            System.out.println("Error en SQL2"+ex);
+        }
     }
 
     /**
@@ -184,7 +260,28 @@ public class Controlador {
      * @param email
      * @throws IOException
      */
-    public void filtrarPedidosEnviadosPorNombreCliente(String email) throws IOException {
+    public void filtrarPedidosEnviadosPorNombreCliente(String email) throws IOException, DAOException {
+        ClienteDao cliente = new factoryClientesDAO();
+        if (cliente.obtener(email)!= null){
+            try{
+                factoryPedido1 dao = new factoryPedido1();
+                List<Pedido> list = dao.obtenerEnviadosCliente(email);
+                if (list.isEmpty()){
+                    System.out.println("No existen pedidos enviados para el cliente: "+cliente.obtener(email).getNombre());
+                }else {
+                    System.out.println("Pedidos Enviados para el cliente: "+cliente.obtener(email).getNombre());
+                    for (Pedido a : list){
+                        System.out.println(a.toString());
+                    }
+                }
+
+            }catch(Exception ex){
+                System.out.println("Error en SQL2"+ex);
+            }
+        }else {
+            System.out.println("El cliente no existe!!!");
+        }
+
 
     }
 

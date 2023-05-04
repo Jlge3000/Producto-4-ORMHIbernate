@@ -1,17 +1,30 @@
 package beepod.modelo;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 
+
+@Entity
+@Table(name= "pedidos")
 public class Pedido {
     //Atributos
-    private static int ultimoNumPedido = 0;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "idPedido")
     private int numPedido;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "email")
     private ClienteHibernateORM cliente;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "codigo")
     private Articulo articulo;
+    @Column(name = "cantidad")
     private int cantidad;
+    @Column(name = "fecha")
     private LocalDateTime fecha;
+    @Column(name = "enviado")
     private boolean enviado;
+    @Column(name = "total")
     private float total;
     /*Constructores
      * */
@@ -20,13 +33,10 @@ public class Pedido {
     }
 
     public Pedido(ClienteHibernateORM cliente, Articulo articulo, int cantidad) {
-        this.numPedido = ++ultimoNumPedido;
         this.cliente= cliente;
         this.articulo = articulo;
         this.cantidad = cantidad;
         this.fecha = LocalDateTime.now();
-        this.enviado = false;
-        this.total = total;
     }
     /*
      * Getters y Setters
@@ -75,13 +85,6 @@ public class Pedido {
         return enviado;
     }
 
-    public static int getUltimoNumPedido() {
-        return ultimoNumPedido;
-    }
-
-    public static void setUltimoNumPedido(int ultimoNumPedido) {
-        Pedido.ultimoNumPedido = ultimoNumPedido;
-    }
 
     public float getTotal() {
         return total;
@@ -95,19 +98,8 @@ public class Pedido {
         this.enviado = enviado;
     }
 
-    public boolean pedidoEnviado(){
-        //Calculo de minutos pasados entre la creación del pedido y la fecha actual para saber
-        LocalDateTime fechaActual = LocalDateTime.now();
-        LocalDateTime fechaPedido = getFecha();
-        long diferenciaMinutos = ChronoUnit.MINUTES.between(fechaPedido, fechaActual);
+    public boolean getEnviado(){ return enviado;}
 
-
-        //Tiempo de preparación del articulo seleccionado
-        long tiempoPreparacion = articulo.getTiempoPreparacion();
-
-        //Comprueba si envio no ha sido enviado
-        return diferenciaMinutos >= tiempoPreparacion;
-    }
 
 
     /*

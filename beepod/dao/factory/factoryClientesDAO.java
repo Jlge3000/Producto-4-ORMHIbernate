@@ -65,7 +65,17 @@ public class factoryClientesDAO implements ClienteDao {
 
     @Override
     public ClienteHibernateORM obtener(String id) throws DAOException {
-        return null;
+        SessionFactory sessionFactory = new Configuration().configure("hibernate.cfg.xml").addAnnotatedClass(ClienteHibernateORM.class).buildSessionFactory();
+        Session session = sessionFactory.openSession();
+
+        try {
+            session.beginTransaction();
+            ClienteHibernateORM cliente = session.get(ClienteHibernateORM.class, id);
+            return cliente;
+        } finally {
+            // Cierra la sesión de Hibernate
+            session.close();
+        }
     }
 
     @Override
