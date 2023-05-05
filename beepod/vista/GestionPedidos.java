@@ -17,6 +17,12 @@ public class GestionPedidos {
 
     }
 
+    /**
+     * Inicio de la aplicación
+     * @param control
+     * @throws IOException
+     * @throws DAOException
+     */
     public void inicio(Controlador control) throws IOException, DAOException {
         boolean salir = false;
         char opcio;
@@ -51,6 +57,10 @@ public class GestionPedidos {
         } while (!salir);
     }
 
+    /**
+     * pedir opcion a seleccionar
+     * @return
+     */
     private char pedirOpcion() {
         String resp;
         System.out.println("Elige la opcion (1,2,3,4 o 0): ");
@@ -61,6 +71,12 @@ public class GestionPedidos {
         return resp.charAt(0);
     }
 
+    /**
+     * introduccón datos del cliente
+     * @param control
+     * @throws IOException
+     * @throws DAOException
+     */
     public void datosPedido(Controlador control) throws IOException, DAOException {
         // Pedir el correo electrónico del cliente
 
@@ -69,7 +85,10 @@ public class GestionPedidos {
         control.crearPedido(email);
     }
 
-
+    /**
+     * metodo para indicar el código del pedido a eliminar
+     * @param control
+     */
     public void datosPedidoEliminar(Controlador control) {
         try {
             System.out.println("Introduce el código del pedido: ");
@@ -81,6 +100,10 @@ public class GestionPedidos {
         }
     }
 
+    /**
+     * metodo para filtrar pedidos pendientes
+     * @param control
+     */
     public void filtrarPedidoPendiente(Controlador control) {
 
         try {
@@ -103,7 +126,10 @@ public class GestionPedidos {
 
     }
 
-
+    /**
+     * metodo para filtrado de pedidos
+     * @param control
+     */
     public void filtrarPedidoEnviado(Controlador control) {
 
         try {

@@ -14,7 +14,7 @@ public class Pedido {
     private int numPedido;
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "email")
-    private ClienteHibernateORM cliente;
+    private Cliente cliente;
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "codigo")
     private Articulo articulo;
@@ -32,7 +32,7 @@ public class Pedido {
     public Pedido() {
     }
 
-    public Pedido(ClienteHibernateORM cliente, Articulo articulo, int cantidad) {
+    public Pedido(Cliente cliente, Articulo articulo, int cantidad) {
         this.cliente= cliente;
         this.articulo = articulo;
         this.cantidad = cantidad;
@@ -49,11 +49,11 @@ public class Pedido {
         this.numPedido = numPedido;
     }
 
-    public ClienteHibernateORM getCliente() {
+    public Cliente getCliente() {
         return cliente;
     }
 
-    public void setCliente(ClienteHibernateORM cliente) {
+    public void setCliente(Cliente cliente) {
         this.cliente = cliente;
     }
 
@@ -106,15 +106,15 @@ public class Pedido {
      * toString*/
     @Override
     public String toString() {
-        return "Pedido{\n" +
-                "ID Pedido: " + numPedido +
-                "\nCliente: " + cliente +
-                "\nArticulo: " + articulo +
+        return "Pedido " +
+                "Numero: " + numPedido +
+                "\nCliente: " + cliente.getNombre() +
+                " Articulo codigo: " + articulo.getCodigo() +" Descripcion: "+articulo.getDescripcion() +
                 "\nCantidad: " + cantidad +
-                "\nTotal: " + total + "€" +
-                "\nFecha: " + fecha +
-                "\nEnviado: " + enviado +
-                "}\n";
+                " Total: " + total + "€" +
+                " Fecha: " + fecha.toString() +
+                " Enviado: " + enviado;
+
     }
 
 }

@@ -10,7 +10,7 @@ import javax.persistence.Query;
 
 import java.util.List;
 
-public class factoryArticuloDAO1 implements ArticuloDao {
+public class factoryArticuloDAO implements ArticuloDao {
     @Override
     public void insertar(Articulo a) throws DAOException {
         SessionFactory sessionFactory = new Configuration().configure("hibernate.cfg.xml").addAnnotatedClass(Articulo.class).buildSessionFactory();
@@ -42,6 +42,11 @@ public class factoryArticuloDAO1 implements ArticuloDao {
 
     }
 
+    /**
+     * Listado de todos los articulos
+     * @return
+     * @throws DAOException
+     */
     @Override
     public List<Articulo> obtenerTodos() throws DAOException {
 
@@ -62,6 +67,12 @@ public class factoryArticuloDAO1 implements ArticuloDao {
         }
     }
 
+    /**
+     * Obtengo el articulo por su código
+     * @param id
+     * @return
+     * @throws DAOException
+     */
     @Override
     public Articulo obtener(String id) throws DAOException {
         SessionFactory sessionFactory = new Configuration().configure("hibernate.cfg.xml").addAnnotatedClass(Articulo.class).buildSessionFactory();
