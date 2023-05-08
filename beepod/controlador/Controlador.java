@@ -137,7 +137,15 @@ public class Controlador {
      * @throws IOException
      */
     public void filtrarPedidosPendientes() throws IOException {
-
+        try{
+            factoryPedido1 dao = new factoryPedido1();
+            List<Pedido> pedidos = dao.obtenerTodosPendienes();
+            for (Pedido a : pedidos) {
+                System.out.println(a.toString());
+            }
+        }catch(Exception ex){
+            System.out.println("Error en SQL2"+ex);
+        }
     }
 
 
@@ -149,8 +157,41 @@ public class Controlador {
      * @throws DAOException
      */
     public void crearPedido(String email) throws IOException, DAOException {
+        ClienteDao clienteDao = new factoryClientesDAO();
+        ArticuloDao articuloDao = new factoryArticuloDAO1();
 
-
+        try {
+            try{
+                if (clienteDao.obtener(email) != null){
+                    System.out.println("Cliente existe");
+                    System.out.println("Introduzca el código del producto");
+                    String codigo = s.nextLine();
+                    try{
+                        if (articuloDao.obtener(codigo)!= null) {
+                            System.out.println("Introduzca la cantidad: ");
+                            int cantidad = s.nextInt();
+                            s.nextLine();
+                            Pedido pedido = new Pedido(clienteDao.obtener(email), articuloDao.obtener(codigo), cantidad);
+                            factoryPedido1 dao = new factoryPedido1();
+                            System.out.println("Pedido añadido!!");
+                            dao.insertar(pedido);
+                        }
+                    }catch (Exception ex){
+                        System.out.println("Error en el articulo "+ ex);
+                    }
+                } else {
+                    System.out.println("Cliente no existe");
+                    System.out.println("El cliente con correo electrónico " + email + " no existe.");
+                    System.out.println("Creando nuevo cliente...");
+                    GestionClientes gestionClientes = new GestionClientes();
+                    gestionClientes.datosCliente(this);
+                }
+            }catch (Exception ex){
+                System.out.println("Error en el registro: " + ex.getMessage());
+            }
+        } catch (Exception e) {
+            System.out.println("Error en el registro: " + e.getMessage());
+        }
     }
 
     /**
@@ -159,7 +200,15 @@ public class Controlador {
      * @throws IOException
      */
     public void filtrarPedidosPendientesPorNombreCliente(String email) throws IOException {
-
+        try{
+            factoryPedido1 dao = new factoryPedido1();
+            List<Pedido> pedidos = dao.obtenerPendientesCliente(email);
+            for (Pedido a : pedidos) {
+                System.out.println(a.toString());
+            }
+        }catch(Exception ex){
+            System.out.println("Error en SQL2"+ex);
+        }
     }
 
     /**
@@ -176,7 +225,15 @@ public class Controlador {
      * @throws IOException
      */
     public void filtrarPedidosEnviados () throws IOException {
-
+        try{
+            factoryPedido1 dao = new factoryPedido1();
+            List<Pedido> pedidos = dao.obtenerTodosEnviados();
+            for (Pedido a : pedidos) {
+                System.out.println(a.toString());
+            }
+        }catch(Exception ex){
+            System.out.println("Error en SQL2"+ex);
+        }
     }
 
     /**
@@ -185,7 +242,15 @@ public class Controlador {
      * @throws IOException
      */
     public void filtrarPedidosEnviadosPorNombreCliente(String email) throws IOException {
-
+        try{
+            factoryPedido1 dao = new factoryPedido1();
+            List<Pedido> pedidos = dao.obtenerEnviadosCliente(email);
+            for (Pedido a : pedidos) {
+                System.out.println(a.toString());
+            }
+        }catch(Exception ex){
+            System.out.println("Error en SQL2"+ex);
+        }
     }
 
 //    public void filtrarPedidosPendientes() throws IOException {
