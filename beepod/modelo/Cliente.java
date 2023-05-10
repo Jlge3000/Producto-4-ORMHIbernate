@@ -7,7 +7,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="clientes")
-public class ClienteHibernateORM {
+public class Cliente {
     /*
      * Atributos
      **/
@@ -31,7 +31,7 @@ public class ClienteHibernateORM {
     @Column(name= "descuento")
     private float descuento;
 
-    public ClienteHibernateORM(String nombre, String domicilio, String nif, String email, String tipoCliente, float cuota, float descuento) {
+    public Cliente(String nombre, String domicilio, String nif, String email, String tipoCliente, float cuota, float descuento) {
         this.nombre = nombre;
         this.domicilio = domicilio;
         this.nif = nif;
@@ -41,7 +41,7 @@ public class ClienteHibernateORM {
         this.descuento = descuento;
     }
 
-    public ClienteHibernateORM(String nombre, String domicilio, String nif, String email, String tipoCliente) {
+    public Cliente(String nombre, String domicilio, String nif, String email, String tipoCliente) {
         this.nombre = nombre;
         this.domicilio = domicilio;
         this.nif = nif;
@@ -49,7 +49,7 @@ public class ClienteHibernateORM {
         this.tipoCliente = tipoCliente;
     }
 
-    public ClienteHibernateORM() {
+    public Cliente() {
     }
 
     public String getNombre() {

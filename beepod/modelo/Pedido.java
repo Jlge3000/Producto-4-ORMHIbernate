@@ -2,7 +2,6 @@ package beepod.modelo;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 
 @Entity
 @Table(name = "pedidos")
@@ -15,7 +14,7 @@ public class Pedido {
     private int numPedido;
     @ManyToOne(cascade= CascadeType.ALL)
     @JoinColumn(name= "email")
-    private ClienteHibernateORM cliente;
+    private Cliente cliente;
     @ManyToOne(cascade= CascadeType.ALL)
     @JoinColumn(name= "codigo")
     private Articulo articulo;
@@ -35,7 +34,7 @@ public class Pedido {
     public Pedido() {
     }
 
-    public Pedido(ClienteHibernateORM cliente, Articulo articulo, int cantidad) {
+    public Pedido(Cliente cliente, Articulo articulo, int cantidad) {
         this.cliente= cliente;
         this.articulo = articulo;
         this.cantidad = cantidad;
@@ -52,11 +51,11 @@ public class Pedido {
         this.numPedido = numPedido;
     }
 
-    public ClienteHibernateORM getCliente() {
+    public Cliente getCliente() {
         return cliente;
     }
 
-    public void setCliente(ClienteHibernateORM cliente) {
+    public void setCliente(Cliente cliente) {
         this.cliente = cliente;
     }
 

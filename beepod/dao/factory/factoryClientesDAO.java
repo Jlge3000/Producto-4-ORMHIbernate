@@ -2,8 +2,7 @@ package beepod.dao.factory;
 
 import beepod.dao.ClienteDao;
 import beepod.dao.DAOException;
-import beepod.modelo.Articulo;
-import beepod.modelo.ClienteHibernateORM;
+import beepod.modelo.Cliente;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -13,8 +12,8 @@ import java.util.List;
 
 public class factoryClientesDAO implements ClienteDao {
     @Override
-    public void insertar(ClienteHibernateORM a) throws DAOException {
-        SessionFactory sessionFactory = new Configuration().configure("hibernate.cfg.xml").addAnnotatedClass(ClienteHibernateORM.class).buildSessionFactory();
+    public void insertar(Cliente a) throws DAOException {
+        SessionFactory sessionFactory = new Configuration().configure("hibernate.cfg.xml").addAnnotatedClass(Cliente.class).buildSessionFactory();
         Session mysesion = sessionFactory.openSession();
 
         try{
@@ -35,26 +34,26 @@ public class factoryClientesDAO implements ClienteDao {
     }
 
     @Override
-    public void modificar(ClienteHibernateORM a) throws DAOException {
+    public void modificar(Cliente a) throws DAOException {
 
     }
 
     @Override
-    public void eliminar(ClienteHibernateORM a) throws DAOException {
+    public void eliminar(Cliente a) throws DAOException {
 
     }
 
     @Override
-    public List<ClienteHibernateORM> obtenerTodos() throws DAOException {
-        SessionFactory sessionFactory = new Configuration().configure("hibernate.cfg.xml").addAnnotatedClass(ClienteHibernateORM.class).buildSessionFactory();
+    public List<Cliente> obtenerTodos() throws DAOException {
+        SessionFactory sessionFactory = new Configuration().configure("hibernate.cfg.xml").addAnnotatedClass(Cliente.class).buildSessionFactory();
         Session session = sessionFactory.openSession();
 
         try {
-            String hql = "FROM ClienteHibernateORM";
-            Query query = session.createQuery(hql, ClienteHibernateORM.class);
+            String hql = "FROM Cliente";
+            Query query = session.createQuery(hql, Cliente.class);
 
             // Ejecuta la consulta y obtien la lista de resultados
-            List<ClienteHibernateORM> resultList = query.getResultList();
+            List<Cliente> resultList = query.getResultList();
 
             return resultList;
         } finally {
@@ -64,13 +63,13 @@ public class factoryClientesDAO implements ClienteDao {
     }
 
     @Override
-    public ClienteHibernateORM obtener(String id) throws DAOException {
-        SessionFactory sessionFactory = new Configuration().configure("hibernate.cfg.xml").addAnnotatedClass(ClienteHibernateORM.class).buildSessionFactory();
+    public Cliente obtener(String id) throws DAOException {
+        SessionFactory sessionFactory = new Configuration().configure("hibernate.cfg.xml").addAnnotatedClass(Cliente.class).buildSessionFactory();
         Session session = sessionFactory.openSession();
 
         try {
             session.beginTransaction();
-            ClienteHibernateORM cliente = session.get(ClienteHibernateORM.class, id);
+            Cliente cliente = session.get(Cliente.class, id);
             return cliente;
         } finally {
             session.close();
@@ -78,20 +77,20 @@ public class factoryClientesDAO implements ClienteDao {
     }
 
     @Override
-    public boolean existe(ClienteHibernateORM a) throws DAOException {
+    public boolean existe(Cliente a) throws DAOException {
         return false;
     }
 
-    public List<ClienteHibernateORM> obtenerTodosNormal() {
-        SessionFactory sessionFactory = new Configuration().configure("hibernate.cfg.xml").addAnnotatedClass(ClienteHibernateORM.class).buildSessionFactory();
+    public List<Cliente> obtenerTodosNormal() {
+        SessionFactory sessionFactory = new Configuration().configure("hibernate.cfg.xml").addAnnotatedClass(Cliente.class).buildSessionFactory();
         Session session = sessionFactory.openSession();
 
         try {
-            String hql = "FROM ClienteHibernateORM WHERE tipoCliente = 'Estandard'";
-            Query query = session.createQuery(hql, ClienteHibernateORM.class);
+            String hql = "FROM Cliente WHERE tipoCliente = 'Estandard'";
+            Query query = session.createQuery(hql, Cliente.class);
 
             // Ejecuta la consulta y obtien la lista de resultados
-            List<ClienteHibernateORM> resultList = query.getResultList();
+            List<Cliente> resultList = query.getResultList();
 
             return resultList;
         } finally {
@@ -100,16 +99,16 @@ public class factoryClientesDAO implements ClienteDao {
         }
     }
 
-    public List<ClienteHibernateORM> obtenerTodosPremium() {
-        SessionFactory sessionFactory = new Configuration().configure("hibernate.cfg.xml").addAnnotatedClass(ClienteHibernateORM.class).buildSessionFactory();
+    public List<Cliente> obtenerTodosPremium() {
+        SessionFactory sessionFactory = new Configuration().configure("hibernate.cfg.xml").addAnnotatedClass(Cliente.class).buildSessionFactory();
         Session session = sessionFactory.openSession();
 
         try {
-            String hql = "FROM ClienteHibernateORM WHERE tipoCliente = 'Premium'";
-            Query query = session.createQuery(hql, ClienteHibernateORM.class);
+            String hql = "FROM Cliente WHERE tipoCliente = 'Premium'";
+            Query query = session.createQuery(hql, Cliente.class);
 
             // Ejecuta la consulta y obtien la lista de resultados
-            List<ClienteHibernateORM> resultList = query.getResultList();
+            List<Cliente> resultList = query.getResultList();
 
             return resultList;
         } finally {

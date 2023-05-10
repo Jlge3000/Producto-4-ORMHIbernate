@@ -1,10 +1,10 @@
 package beepod.dao;
 
-import beepod.modelo.ClienteHibernateORM;
+import beepod.modelo.Cliente;
 
 import java.util.List;
 
-public interface ClienteDao extends DAO<ClienteHibernateORM, String> {
-    List<ClienteHibernateORM> obtenerTodosNormal();
-    List<ClienteHibernateORM> obtenerTodosPremium();
+public interface ClienteDao extends DAO<Cliente, String> {
+    List<Cliente> obtenerTodosNormal();
+    List<Cliente> obtenerTodosPremium();
 }

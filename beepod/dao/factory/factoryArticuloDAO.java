@@ -10,7 +10,7 @@ import javax.persistence.Query;
 
 import java.util.List;
 
-public class factoryArticuloDAO1 implements ArticuloDao {
+public class factoryArticuloDAO implements ArticuloDao {
     @Override
     public void insertar(Articulo a) throws DAOException {
         SessionFactory sessionFactory = new Configuration().configure("hibernate.cfg.xml").addAnnotatedClass(Articulo.class).buildSessionFactory();

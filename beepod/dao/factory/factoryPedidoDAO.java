@@ -2,17 +2,18 @@ package beepod.dao.factory;
 
 import beepod.dao.DAOException;
 import beepod.modelo.Articulo;
-import beepod.modelo.ClienteHibernateORM;
+import beepod.modelo.Cliente;
 import beepod.modelo.Pedido;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
+import javax.persistence.Query;
 import javax.persistence.StoredProcedureQuery;
 import java.util.List;
 
 
-public class factoryPedido1 {
+public class factoryPedidoDAO {
 
 
     /**
@@ -28,7 +29,7 @@ public class factoryPedido1 {
      */
     public void insertar(Pedido a) throws DAOException {
         SessionFactory sessionFactory = new Configuration().configure("hibernate.cfg.xml").addAnnotatedClass(Pedido.class).
-                addAnnotatedClass(Articulo.class).addAnnotatedClass(ClienteHibernateORM.class).buildSessionFactory();
+                addAnnotatedClass(Articulo.class).addAnnotatedClass(Cliente.class).buildSessionFactory();
         Session mysesion = sessionFactory.openSession();
 
         try{
@@ -62,7 +63,7 @@ public class factoryPedido1 {
 
     public List<Pedido> obtenerPendientesCliente(String email) throws DAOException {
         SessionFactory sessionFactory = new Configuration().configure("hibernate.cfg.xml").addAnnotatedClass(Pedido.class).
-                addAnnotatedClass(Articulo.class).addAnnotatedClass(ClienteHibernateORM.class).buildSessionFactory();
+                addAnnotatedClass(Articulo.class).addAnnotatedClass(Cliente.class).buildSessionFactory();
         Session mysesion = sessionFactory.openSession();
 
         try{
@@ -87,7 +88,7 @@ public class factoryPedido1 {
      */
     public List<Pedido> obtenerTodosPendienes() throws DAOException {
         SessionFactory sessionFactory = new Configuration().configure("hibernate.cfg.xml").addAnnotatedClass(Pedido.class).
-                addAnnotatedClass(Articulo.class).addAnnotatedClass(ClienteHibernateORM.class).buildSessionFactory();
+                addAnnotatedClass(Articulo.class).addAnnotatedClass(Cliente.class).buildSessionFactory();
         Session mysesion = sessionFactory.openSession();
 
         try{
@@ -113,8 +114,22 @@ public class factoryPedido1 {
      */
     public void eliminar(int id) throws DAOException {
         SessionFactory sessionFactory = new Configuration().configure("hibernate.cfg.xml").addAnnotatedClass(Pedido.class).
-                addAnnotatedClass(Articulo.class).addAnnotatedClass(ClienteHibernateORM.class).buildSessionFactory();
+                addAnnotatedClass(Articulo.class).addAnnotatedClass(Cliente.class).buildSessionFactory();
         Session mysesion = sessionFactory.openSession();
+
+        try{
+            StoredProcedureQuery query = mysesion.createStoredProcedureQuery("cambiarEnvio");//llamamos al procedimiento almacenado
+            query.execute();
+
+            mysesion.beginTransaction();
+
+            mysesion.createQuery("DELETE FROM Pedido WHERE enviado = '0' AND numPedido = :valor1").setParameter("valor1",id).executeUpdate();
+            mysesion.getTransaction().commit();
+            mysesion.close();
+
+        } finally {
+            sessionFactory.close();
+        }
     }
 
     /**
@@ -123,7 +138,7 @@ public class factoryPedido1 {
      */
     public List<Pedido> obtenerTodosEnviados() throws DAOException {
         SessionFactory sessionFactory = new Configuration().configure("hibernate.cfg.xml").addAnnotatedClass(Pedido.class).
-                addAnnotatedClass(Articulo.class).addAnnotatedClass(ClienteHibernateORM.class).buildSessionFactory();
+                addAnnotatedClass(Articulo.class).addAnnotatedClass(Cliente.class).buildSessionFactory();
         Session mysesion = sessionFactory.openSession();
 
         try{
@@ -149,7 +164,7 @@ public class factoryPedido1 {
      */
     public List<Pedido> obtenerEnviadosCliente(String email) throws DAOException {
         SessionFactory sessionFactory = new Configuration().configure("hibernate.cfg.xml").addAnnotatedClass(Pedido.class).
-                addAnnotatedClass(Articulo.class).addAnnotatedClass(ClienteHibernateORM.class).buildSessionFactory();
+                addAnnotatedClass(Articulo.class).addAnnotatedClass(Cliente.class).buildSessionFactory();
         Session mysesion = sessionFactory.openSession();
 
         try{
@@ -173,6 +188,21 @@ public class factoryPedido1 {
      * @throws DAOException
      */
     public void actualizarPedidos() throws DAOException {
+    }
+
+    public Long comprobarPedido(int idPedido){
+        SessionFactory sessionFactory = new Configuration().configure("hibernate.cfg.xml").addAnnotatedClass(Pedido.class).addAnnotatedClass(Articulo.class).addAnnotatedClass(Cliente.class).buildSessionFactory();
+        Session session = sessionFactory.openSession();
+        try {
+            String hql = "SELECT COUNT(*) FROM Pedido WHERE enviado = '0' AND numPedido = :valor1";
+            Query query = session.createQuery(hql).setParameter("valor1",idPedido);
+            Long count = (Long) query.getSingleResult();
+            session.close();
+            return count;
+        } finally {
+            // Cierra la sesión de Hibernate
+            sessionFactory.close();
+        }
     }
 }
 
