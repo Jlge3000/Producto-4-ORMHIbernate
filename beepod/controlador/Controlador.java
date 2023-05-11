@@ -131,7 +131,6 @@ public class Controlador {
         }
     }
 
-/////---------------------A partir de aquí falta---------------------------
     /**
      * Metodo para listar todos los pedidos pendientes, interactua con el metodo obtenerTodosPendientes de factoryPedidoDAO
      * @throws IOException
