@@ -8,6 +8,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
 import javax.persistence.Query;
+import javax.swing.*;
 import java.util.List;
 
 public class factoryClientesDAO implements ClienteDao {
@@ -25,12 +26,9 @@ public class factoryClientesDAO implements ClienteDao {
             mysesion.beginTransaction();
             mysesion.save(a);
             mysesion.getTransaction().commit();
-            System.out.println("registro insertado");
-            System.out.println(a);
             mysesion.close();
         }catch (Exception ex){
-
-            System.out.println("Error al insertar: \n"+ex);
+            JOptionPane.showMessageDialog(null, "Error en el registro");
         }
         finally {
             sessionFactory.close();

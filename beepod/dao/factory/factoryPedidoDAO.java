@@ -43,11 +43,7 @@ public class factoryPedidoDAO {
 
     }
 
-    /**
-     * metodo para convertir el resultset en algo visible por pantalla.
-     * @param rs
-     * @throws SQLException
-     */
+
 
 
     /**
@@ -89,8 +85,8 @@ public class factoryPedidoDAO {
 
         try {
 
-            StoredProcedureQuery query = session.createStoredProcedureQuery("cambiarEnvio");//llamamos al procedimiento almacenado
-            query.execute();
+                StoredProcedureQuery query = session.createStoredProcedureQuery("cambiarEnvio");//llamamos al procedimiento almacenado
+                query.execute();
             String hql = "FROM Pedido WHERE enviado = '0'";
             Query query1 = session.createQuery(hql, Pedido.class);
             // Ejecuta la consulta y obtien la lista de resultados
@@ -178,6 +174,12 @@ public class factoryPedidoDAO {
             sessionFactory.close();
         }
     }
+
+    /**
+     * Metodo para comprobar si un pedido existe contando el numero de pedidos pendientes de ese id
+     * @param idPedido
+     * @return
+     */
     public Long comprobarPedido(int idPedido){
         SessionFactory sessionFactory = new Configuration().configure("hibernate.cfg.xml").addAnnotatedClass(Pedido.class).addAnnotatedClass(Articulo.class).addAnnotatedClass(Cliente.class).buildSessionFactory();
         Session session = sessionFactory.openSession();
@@ -193,6 +195,10 @@ public class factoryPedidoDAO {
         }
 
     }
+
+    /**
+     * método no usado para comprobar el estado del pedido, para ello primero llamamos al procedimiento cambiar envio
+     */
     public void actualizarPedidos(){
         SessionFactory sessionFactory = new Configuration().configure("hibernate.cfg.xml").addAnnotatedClass(Pedido.class).addAnnotatedClass(Articulo.class).addAnnotatedClass(Cliente.class).buildSessionFactory();
         Session session = sessionFactory.openSession();
