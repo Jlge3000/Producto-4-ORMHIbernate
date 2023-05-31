@@ -3,6 +3,7 @@ package beepod.vista;
 import beepod.controlador.Controlador;
 import beepod.modelo.Cliente;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -71,25 +72,36 @@ public class GestionClientes extends Application {
         Button button1 = new Button("Añadir Clientes");
         button1.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;");
         button1.setOnAction(e -> {
-            try {
-                String nombre = nombreField.getText();
-                String domicilio = domicilioField.getText();
-                String nif = nifField.getText();
-                String email = emailField.getText();
-                String tipo = tipoComboBox.getValue();
-                int tipoValue = tipo.equals("Estandar") ? 1 : 2;
-                control.crearCliente(nombre, domicilio, nif, email, tipoValue);
+            if ( nombreField.getText().isEmpty() || domicilioField.getText().isEmpty() || nifField.getText().isEmpty()
+                    || emailField.getText().isEmpty() || tipoComboBox.getValue().isEmpty()){
+                Platform.runLater(() -> {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Faltan datos por rellenar");
+                    alert.showAndWait();
+                });
+            }else{
+                try {
+                    String nombre = nombreField.getText();
+                    String domicilio = domicilioField.getText();
+                    String nif = nifField.getText();
+                    String email = emailField.getText();
+                    String tipo = tipoComboBox.getValue();
+                    int tipoValue = tipo.equals("Estandar") ? 1 : 2;
+                    control.crearCliente(nombre, domicilio, nif, email, tipoValue);
 
-                List<Cliente> listaClientes = control.listarTodosClientes();
-                mostrarClientesEnTableView(tableView, listaClientes);
+                    List<Cliente> listaClientes = control.listarTodosClientes();
+                    mostrarClientesEnTableView(tableView, listaClientes);
 
-                nombreField.clear();
-                domicilioField.clear();
-                nifField.clear();
-                emailField.clear();
-                tipoComboBox.getSelectionModel().clearSelection();
-            } catch (Exception ex) {
-                ex.printStackTrace();
+                    nombreField.clear();
+                    domicilioField.clear();
+                    nifField.clear();
+                    emailField.clear();
+                    tipoComboBox.getSelectionModel().clearSelection();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
             }
         });
 

@@ -2,6 +2,7 @@ package beepod.vista;
 
 import beepod.controlador.Controlador;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import beepod.modelo.Articulo;
@@ -67,19 +68,32 @@ public class GestionArticulos extends Application {
         Button btnAddArticulo = new Button("Añadir Articulo");
         btnAddArticulo.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;");
         btnAddArticulo.setOnAction(event -> {
-            try {
-                control.crearArticulo(codigoField.getText(), descripcionField.getText(), Float.parseFloat(precioVentaField.getText()),
-                        Float.parseFloat(gastosEnvioField.getText()), Long.parseLong(tiempoPreparacionField.getText()));
-                List<Articulo> articulos = control.listarArticulos();
-                mostrarArticulosEnTableView(tableView, articulos);
-                codigoField.clear();
-                descripcionField.clear();
-                precioVentaField.clear();
-                gastosEnvioField.clear();
-                tiempoPreparacionField.clear();
-            } catch (IOException e) {
-                e.printStackTrace();
+            if (codigoField.getText().isEmpty()||descripcionField.getText().isEmpty()|| precioVentaField.getText().isEmpty()|| gastosEnvioField.getText().isEmpty()
+                    ||tiempoPreparacionField.getText().isEmpty()) {
+                Platform.runLater(() -> {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Faltan datos.");
+                    alert.showAndWait();
+                });
+            }else{
+                try {
+                    control.crearArticulo(codigoField.getText(), descripcionField.getText(), Float.parseFloat(precioVentaField.getText()),
+                            Float.parseFloat(gastosEnvioField.getText()), Long.parseLong(tiempoPreparacionField.getText()));
+                    List<Articulo> articulos = control.listarArticulos();
+                    mostrarArticulosEnTableView(tableView, articulos);
+                    codigoField.clear();
+                    descripcionField.clear();
+                    precioVentaField.clear();
+                    gastosEnvioField.clear();
+                    tiempoPreparacionField.clear();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
+
+
         });
 
 
