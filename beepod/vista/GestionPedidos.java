@@ -1,128 +1,214 @@
 package beepod.vista;
 
 import beepod.controlador.Controlador;
-import beepod.dao.DAOException;
+import beepod.modelo.Pedido;
+import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
+import javafx.stage.Stage;
+import java.util.List;
 
-import java.io.IOException;
-import java.util.Scanner;
+public class GestionPedidos extends Application {
+    public Controlador control;
+    private TableView<Pedido> tableView = new TableView<>();
 
-/**
- * Clase para la gestión de los pedidos
- */
-public class GestionPedidos {
-    Controlador control = new Controlador();
-    Scanner teclado = new Scanner(System.in);
-
-    public GestionPedidos() {
-
+    public GestionPedidos(Controlador control) {
+        this.control = control;
     }
 
-    public void inicio(Controlador control) throws IOException, DAOException {
-        boolean salir = false;
-        char opcio;
+    public void inicio(Stage primaryStage, GestionOs gestionOs) {
+        primaryStage.setTitle("Gestión de Pedidos");
+        VBox vboxMain = new VBox();
+        vboxMain.setStyle("-fx-background-color: #2B2B2B;");
 
+        GridPane gridPane = new GridPane();
+        gridPane.setMinSize(400, 200);
+        gridPane.setPadding(new Insets(10, 10, 10, 10));
+        gridPane.setVgap(5);
+        gridPane.setHgap(5);
+        gridPane.setStyle("-fx-background-color: #2B2B2B;");
 
-        do {
-            System.out.println("1. Añadir Pedido");
-            System.out.println("2. Eliminar Pedido");
-            System.out.println("3. Mostrar Pedidos pendientes");
-            System.out.println("4. Mostrar Pedidos enviados");
-            System.out.println("0. Salir");
-            opcio = pedirOpcion();
-            switch (opcio) {
-                case '1':
-                    datosPedido(control);
-                    break;
-                case '2':
-                    datosPedidoEliminar(control);
-                    break;
-                case '3':
-                    filtrarPedidoPendiente(control);
-                    break;
-                case '4':
-                    filtrarPedidoEnviado(control);
-                    break;
-                case '0':
-                    salir = true;
-                    break;
-                default:
-                    System.out.println("Opción incorrecta!!");
+        Label emailLabel = new Label("Email: ");
+        emailLabel.setTextFill(Color.WHITE);
+        TextField emailField = new TextField();
+        emailField.setStyle("-fx-background-color: #808080; -fx-text-fill: white;");
+
+        Text codigoLabel = new Text("Código del producto: ");
+        codigoLabel.setFill(Color.WHITE);
+        TextField codigoField = new TextField();
+        codigoField.setStyle("-fx-background-color: #808080; -fx-text-fill: white;");
+
+        Text cantidadLabel = new Text("Cantidad: ");
+        cantidadLabel.setFill(Color.WHITE);
+        TextField cantidadField = new TextField();
+        cantidadField.setStyle("-fx-background-color: #808080; -fx-text-fill: white;");
+
+        Text pedidoIdLabel = new Text("Pedido ID: ");
+        pedidoIdLabel.setFill(Color.WHITE);
+        TextField pedidoIdField = new TextField();
+        pedidoIdField.setStyle("-fx-background-color: #808080; -fx-text-fill: white;");
+
+        Button btnAddPedido = new Button("Añadir Pedido");
+        btnAddPedido.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;");
+        btnAddPedido.setOnAction(e -> {
+            try {
+                String email = emailField.getText();
+                String codigo = codigoField.getText();
+                int cantidad = Integer.parseInt(cantidadField.getText());
+                control.crearPedido(email, codigo, cantidad);
+
+                List<Pedido> listaPedidos = control.filtrarPedidosPendientes();
+                mostrarPedidosEnTableView(tableView, listaPedidos);
+
+                emailField.clear();
+                codigoField.clear();
+                cantidadField.clear();
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
-        } while (!salir);
-    }
+        });
 
-    private char pedirOpcion() {
-        String resp;
-        System.out.println("Elige la opcion (1,2,3,4 o 0): ");
-        resp = teclado.nextLine();
-        if (resp.isEmpty()) {
-            resp = " ";
-        }
-        return resp.charAt(0);
-    }
+        Button btnEliminarPedido = new Button("Eliminar Pedido");
+        btnEliminarPedido.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;");
+        btnEliminarPedido.setOnAction(e -> {
+            try {
+                int pedidoId = Integer.parseInt(pedidoIdField.getText());
+                if (control.eliminarPedido(pedidoId)) {
+                    List<Pedido> listaPedidos = control.filtrarPedidosPendientes();
+                    mostrarPedidosEnTableView(tableView, listaPedidos);
 
-    public void datosPedido(Controlador control) throws IOException, DAOException {
-        // Pedir el correo electrónico del cliente
-
-        System.out.println("Introduce el correo electrónico del cliente: ");
-        String email = teclado.nextLine();
-        control.crearPedido(email);
-    }
-
-
-    public void datosPedidoEliminar(Controlador control) {
-        try {
-            System.out.println("Introduce el código del pedido: ");
-            int idPedido = teclado.nextInt();
-            teclado.nextLine();
-            control.eliminarPedido(idPedido);
-        }  catch (Exception e) {
-            System.out.println("Se ha producido un error: " + e.getMessage());
-        }
-    }
-
-    public void filtrarPedidoPendiente(Controlador control) {
-
-        try {
-            System.out.println("Elige la opción: ('1' Para mostrar todos o '2' Para mostrar por cliente): ");
-            int opcion = teclado.nextInt();
-            teclado.nextLine();
-            if (opcion == 1) {
-                control.filtrarPedidosPendientes();
-            } else if (opcion == 2) {
-                System.out.println("Introduce el email del cliente: ");
-                String email = teclado.nextLine();
-                control.filtrarPedidosPendientesPorNombreCliente(email);
-            } else {
-                teclado.nextLine();
-                System.out.println("No se escogió una opción válida. Saliendo al menu...");
+                    pedidoIdField.clear();
+                } else {
+                    System.out.println("No se pudo eliminar el pedido.");
+                }
+            } catch (NumberFormatException ex) {
+                System.out.println("Número de pedido inválido.");
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
-        }  catch (Exception e) {
-            System.out.println("Se ha producido un error: " + e.getMessage());
-        }
+        });
 
+        Button btnMostrarPedidosPendientes = new Button("Mostrar Pedidos Pendientes");
+        btnMostrarPedidosPendientes.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;");
+        btnMostrarPedidosPendientes.setOnAction(e -> {
+            try {
+                List<Pedido> listaPedidos = control.filtrarPedidosPendientes();
+
+                System.out.println("Pedidos pendientes: " + listaPedidos);
+
+                mostrarPedidosEnTableView(tableView, listaPedidos);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
+
+        Button btnMostrarPedidosEnviados = new Button("Mostrar Pedidos Enviados");
+        btnMostrarPedidosEnviados.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;");
+        btnMostrarPedidosEnviados.setOnAction(e -> {
+            try {
+                List<Pedido> listaPedidos = control.filtrarPedidosEnviados();
+                mostrarPedidosEnTableView(tableView, listaPedidos);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
+
+        Button btnMostrarPedidosPendientesCliente = new Button("Mostrar Pedidos Pendientes de Cliente");
+        btnMostrarPedidosPendientesCliente.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;");
+        btnMostrarPedidosPendientesCliente.setOnAction(e -> {
+            try {
+                String email = emailField.getText();
+                List<Pedido> listaPedidos = control.filtrarPedidosPendientesPorNombreCliente(email);
+                mostrarPedidosEnTableView(tableView, listaPedidos);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
+
+        Button btnMostrarPedidosEnviadosCliente = new Button("Mostrar Pedidos Enviados de Cliente");
+        btnMostrarPedidosEnviadosCliente.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;");
+        btnMostrarPedidosEnviadosCliente.setOnAction(e -> {
+            try {
+                String email = emailField.getText();
+                List<Pedido> listaPedidos = control.filtrarPedidosEnviadosPorNombreCliente(email);
+                mostrarPedidosEnTableView(tableView, listaPedidos);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
+
+        Button volverButton = new Button("Volver");
+        volverButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;");
+        volverButton.setOnAction(e -> {
+            try {
+                gestionOs.start(primaryStage);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
+
+        tableView.setMaxHeight(150);
+        Text emptyMessage = new Text("Tabla sin contenido");
+        emptyMessage.setFill(Color.WHITE);
+        tableView.setPlaceholder(emptyMessage);
+
+        gridPane.add(emailLabel, 0, 0);
+        gridPane.add(emailField, 1, 0);
+        gridPane.add(codigoLabel, 0, 1);
+        gridPane.add(codigoField, 1, 1);
+        gridPane.add(cantidadLabel, 0, 2);
+        gridPane.add(cantidadField, 1, 2);
+        gridPane.add(pedidoIdLabel, 0, 3);
+        gridPane.add(pedidoIdField, 1, 3);
+        gridPane.add(btnAddPedido, 0, 4);
+        gridPane.add(btnEliminarPedido, 1, 4);
+        gridPane.add(btnMostrarPedidosPendientes, 0, 5);
+        gridPane.add(btnMostrarPedidosEnviados, 1, 5);
+        gridPane.add(btnMostrarPedidosPendientesCliente, 0, 6);
+        gridPane.add(btnMostrarPedidosEnviadosCliente, 1, 6);
+
+        VBox vboxMainForInicio = new VBox();
+        vboxMainForInicio.setStyle("-fx-background-color: #2B2B2B;");
+        vboxMainForInicio.getChildren().addAll(gridPane, tableView, volverButton);
+
+        Scene sceneInicio = new Scene(vboxMainForInicio, 600, 400);
+        sceneInicio.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+        primaryStage.setScene(sceneInicio);
+        primaryStage.setTitle("Gestión de Pedidos");
+        primaryStage.show();
+    }
+
+    public void mostrarPedidosEnTableView(TableView<Pedido> tableView, List<Pedido> listaPedidos) {
+        TableColumn<Pedido, String> emailColumn = new TableColumn<>("Email Cliente");
+        emailColumn.setCellValueFactory(new PropertyValueFactory<>("emailCliente"));
+
+        TableColumn<Pedido, Integer> idColumn = new TableColumn<>("ID Pedido");
+        idColumn.setCellValueFactory(new PropertyValueFactory<>("numPedido")); // Cambia 'idPedido' por 'numPedido'
+
+        TableColumn<Pedido, String> codigoColumn = new TableColumn<>("Codigo Producto");
+        codigoColumn.setCellValueFactory(new PropertyValueFactory<>("codigoArticulo"));
+
+        TableColumn<Pedido, Integer> cantidadColumn = new TableColumn<>("Cantidad");
+        cantidadColumn.setCellValueFactory(new PropertyValueFactory<>("cantidad"));
+
+        tableView.getColumns().setAll(idColumn, emailColumn, codigoColumn, cantidadColumn);
+
+        ObservableList<Pedido> observableList = FXCollections.observableArrayList(listaPedidos);
+        tableView.setItems(observableList);
     }
 
 
-    public void filtrarPedidoEnviado(Controlador control) {
 
-        try {
-            System.out.println("Elige la opción: ('1' Para mostrar todos o '2' Para mostrar por cliente): ");
-            int opcion = teclado.nextInt();
-            teclado.nextLine();
-            if (opcion == 1) {
-                control.filtrarPedidosEnviados();
-            } else if (opcion == 2) {
-                System.out.println("Introduce el email del cliente: ");
-                String email = teclado.nextLine();
-                control.filtrarPedidosEnviadosPorNombreCliente(email);
-            } else {
-                teclado.nextLine();
-                System.out.println("No se escogió una opción válida. Saliendo al menu...");
-            }
-        } catch (Exception e) {
-            System.out.println("Se ha producido un error: " + e.getMessage());
-        }
+    @Override
+    public void start(Stage stage) throws Exception {
 
     }
 }

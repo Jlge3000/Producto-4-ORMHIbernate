@@ -3,16 +3,17 @@ package beepod.controlador;
 import beepod.dao.*;
 import beepod.dao.factory.*;
 import beepod.modelo.*;
-import beepod.vista.GestionClientes;
+import javafx.application.Platform;
+import javafx.scene.control.Alert;
 
 import java.io.IOException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 public class Controlador {
 
-    GestionClientes gestionClientes = new GestionClientes();
     Scanner s = new Scanner(System.in);
 
 
@@ -43,17 +44,17 @@ public class Controlador {
      * metodo listar todos los articulos, llama al metodo obtener todos de factoryArticuloDao
      * @throws IOException
      */
-    public void listarArticulos() throws IOException {
-        try{
+    public List<Articulo> listarArticulos() throws IOException {
+        List<Articulo> articulos = new ArrayList<>();
+        try {
             ArticuloDao dao = new factoryArticuloDAO();
-            List<Articulo> articulos = dao.obtenerTodos();
-            for (Articulo a: articulos){
-                System.out.println(a.toString());
-            }
-        }catch(Exception ex){
-            System.out.println("Error en SQL2"+ex);
+            articulos = dao.obtenerTodos();
+        } catch(Exception ex) {
+            System.out.println("Error en SQL2" + ex);
         }
+        return articulos;
     }
+
 
     /**
      * metodo creacion clientes, recibe parametros de la vista e interactua con factoryClienteEstandaraDao y factoryClientePremiumDao
@@ -87,64 +88,60 @@ public class Controlador {
      * metodo listar todos los clientes Estandard de factoryClienteEstandarDAO
      * @throws IOException
      */
-    public void listarClientesNormal() throws IOException {
+    public List<Cliente> listarClientesNormal() throws IOException {
+        List<Cliente> clienteNormals = new ArrayList<>();
         try{
             ClienteDao dao = new factoryClientesDAO();
-            List<Cliente> clienteNormals = dao.obtenerTodosNormal();
-            for (Cliente a: clienteNormals){
-                System.out.println(a.toString());
-            }
+            clienteNormals = dao.obtenerTodosNormal();
         }catch(Exception ex){
             System.out.println("Error en SQL2"+ex);
         }
+        return clienteNormals;
     }
 
     /**
      * metodo listar todos los clientes Premium de factoryClientePremiumDAO
      * @throws IOException
      */
-    public void listarClientesPremium() throws IOException {
+    public List<Cliente> listarClientesPremium() throws IOException {
+        List<Cliente> clienteNormals = new ArrayList<>();
         try{
             ClienteDao dao = new factoryClientesDAO();
-            List<Cliente> clienteNormals = dao.obtenerTodosPremium();
-            for (Cliente a: clienteNormals){
-                System.out.println(a.toString());
-            }
+            clienteNormals = dao.obtenerTodosPremium();
         }catch(Exception ex){
             System.out.println("Error en SQL2"+ex);
         }
+        return clienteNormals;
     }
 
     /**
      * Une las dos listas de clientes Estandard y Premium
      * @throws IOException
      */
-    public void listarTodosClientes() throws IOException {
+    public List<Cliente> listarTodosClientes() throws IOException {
+        List<Cliente> clienteNormals = new ArrayList<>();
         try{
             ClienteDao dao = new factoryClientesDAO();
-            List<Cliente> clienteNormals = dao.obtenerTodos();
-            for (Cliente a: clienteNormals){
-                System.out.println(a.toString());
-            }
+            clienteNormals = dao.obtenerTodos();
         }catch(Exception ex){
             System.out.println("Error en SQL2"+ex);
         }
+        return clienteNormals;
     }
 
     /**
      * Metodo para listar todos los pedidos pendientes, interactua con el metodo obtenerTodosPendientes de factoryPedidoDAO
      * @throws IOException
      */
-    public void filtrarPedidosPendientes() throws IOException {
+    public List<Pedido> filtrarPedidosPendientes() throws IOException {
+        List<Pedido> pedidos = new ArrayList<>();
         try{
             factoryPedidoDAO dao = new factoryPedidoDAO();
-            List<Pedido> pedidos = dao.obtenerTodosPendienes();
-            for (Pedido a : pedidos) {
-                System.out.println(a.toString());
-            }
+            pedidos = dao.obtenerTodosPendienes();
         }catch(Exception ex){
             System.out.println("Error en SQL2"+ex);
         }
+        return pedidos;
     }
 
 
@@ -155,41 +152,44 @@ public class Controlador {
      * @throws IOException
      * @throws DAOException
      */
-    public void crearPedido(String email) throws IOException, DAOException {
+    public void crearPedido(String email, String codigo, int cantidad) {
         ClienteDao clienteDao = new factoryClientesDAO();
         ArticuloDao articuloDao = new factoryArticuloDAO();
 
         try {
-            try{
-                if (clienteDao.obtener(email) != null){
-                    System.out.println("Cliente existe");
-                    System.out.println("Introduzca el código del producto");
-                    String codigo = s.nextLine();
-                    try{
-                        if (articuloDao.obtener(codigo)!= null) {
-                            System.out.println("Introduzca la cantidad: ");
-                            int cantidad = s.nextInt();
-                            s.nextLine();
-                            Pedido pedido = new Pedido(clienteDao.obtener(email), articuloDao.obtener(codigo), cantidad);
-                            factoryPedidoDAO dao = new factoryPedidoDAO();
-                            System.out.println("Pedido añadido!!");
-                            dao.insertar(pedido);
-                        }
-                    }catch (Exception ex){
-                        System.out.println("Error en el articulo "+ ex);
-                    }
-                } else {
-                    System.out.println("Cliente no existe");
-                    System.out.println("El cliente con correo electrónico " + email + " no existe.");
-                    System.out.println("Creando nuevo cliente...");
-                    GestionClientes gestionClientes = new GestionClientes();
-                    gestionClientes.datosCliente(this);
+            if (clienteDao.obtener(email) != null){
+                if (articuloDao.obtener(codigo)!= null) {
+                    Pedido pedido = new Pedido(clienteDao.obtener(email), articuloDao.obtener(codigo), cantidad);
+                    factoryPedidoDAO dao = new factoryPedidoDAO();
+                    dao.insertar(pedido);
                 }
-            }catch (Exception ex){
-                System.out.println("Error en el registro: " + ex.getMessage());
+                else {
+                    Platform.runLater(() -> {
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Error");
+                        alert.setHeaderText(null);
+                        alert.setContentText("Artículo no encontrado.");
+                        alert.showAndWait();
+                    });
+                }
+            }
+            else {
+                Platform.runLater(() -> {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Información");
+                    alert.setHeaderText(null);
+                    alert.setContentText("El cliente con correo electrónico " + email + " no existe.\nPor favor, cree un nuevo cliente.");
+                    alert.showAndWait();
+                });
             }
         } catch (Exception e) {
-            System.out.println("Error en el registro: " + e.getMessage());
+            Platform.runLater(() -> {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText(null);
+                alert.setContentText("Error en el registro: " + e.getMessage());
+                alert.showAndWait();
+            });
         }
     }
 
@@ -198,16 +198,15 @@ public class Controlador {
      * @param email
      * @throws IOException
      */
-    public void filtrarPedidosPendientesPorNombreCliente(String email) throws IOException {
+    public List<Pedido> filtrarPedidosPendientesPorNombreCliente(String email) throws IOException {
+        List<Pedido> pedidos = new ArrayList<>();
         try{
             factoryPedidoDAO dao = new factoryPedidoDAO();
-            List<Pedido> pedidos = dao.obtenerPendientesCliente(email);
-            for (Pedido a : pedidos) {
-                System.out.println(a.toString());
-            }
+            pedidos = dao.obtenerPendientesCliente(email);
         }catch(Exception ex){
             System.out.println("Error en SQL2"+ex);
         }
+        return pedidos;
     }
 
     /**
@@ -215,22 +214,18 @@ public class Controlador {
      * @param numPedido
      * @throws IOException
      */
-    public void eliminarPedido (int numPedido) throws IOException {
+    public boolean eliminarPedido(int numPedido) throws IOException {
         try{
             factoryPedidoDAO dao = new factoryPedidoDAO();
             if(dao.comprobarPedido(numPedido) > 0) {
-            dao.eliminar(numPedido);
-            System.out.println("Pedido eliminado correctamente!!");
-            System.out.println("Pedidos pendientes ahora: ");
-            List<Pedido> pedidos = dao.obtenerTodosPendienes();
-            for (Pedido a : pedidos) {
-                System.out.println(a.toString());
-            }
+                dao.eliminar(numPedido);
+                return true;
             } else {
-                System.out.println("Pedido no eliminable.");
+                return false;
             }
         }catch(Exception ex){
-            System.out.println("No se ha podido eliminar el pedido, está ya enviado ");
+            System.out.println("No se ha podido eliminar el pedido, está ya enviado");
+            return false;
         }
     }
 
@@ -238,16 +233,15 @@ public class Controlador {
      *metodo para mostrar los pedidos enviados.
      * @throws IOException
      */
-    public void filtrarPedidosEnviados () throws IOException {
+    public List<Pedido> filtrarPedidosEnviados() throws IOException {
+        List<Pedido> pedidos = new ArrayList<>();
         try{
             factoryPedidoDAO dao = new factoryPedidoDAO();
-            List<Pedido> pedidos = dao.obtenerTodosEnviados();
-            for (Pedido a : pedidos) {
-                System.out.println(a.toString());
-            }
+            pedidos = dao.obtenerTodosEnviados();
         }catch(Exception ex){
             System.out.println("Error en SQL2"+ex);
         }
+        return pedidos;
     }
 
     /**
@@ -255,15 +249,14 @@ public class Controlador {
      * @param email
      * @throws IOException
      */
-    public void filtrarPedidosEnviadosPorNombreCliente(String email) throws IOException {
+    public List<Pedido> filtrarPedidosEnviadosPorNombreCliente(String email) throws IOException {
+        List<Pedido> pedidos = new ArrayList<>();
         try{
             factoryPedidoDAO dao = new factoryPedidoDAO();
-            List<Pedido> pedidos = dao.obtenerEnviadosCliente(email);
-            for (Pedido a : pedidos) {
-                System.out.println(a.toString());
-            }
+            pedidos = dao.obtenerEnviadosCliente(email);
         }catch(Exception ex){
             System.out.println("Error en SQL2"+ex);
         }
+        return pedidos;
     }
 }

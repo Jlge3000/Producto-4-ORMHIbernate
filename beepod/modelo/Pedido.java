@@ -99,6 +99,14 @@ public class Pedido {
         this.enviado = enviado;
     }
 
+    public String getEmailCliente() {
+        return this.cliente.getEmail();
+    }
+
+    public String getCodigoArticulo() {
+        return this.articulo.getCodigo();
+    }
+
     /*
      * toString*/
     @Override

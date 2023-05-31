@@ -10,5 +10,6 @@
     <orderEntry type="library" name="hibernate.c3p0" level="project" />
     <orderEntry type="library" name="mysql.connector.j" level="project" />
     <orderEntry type="library" name="junit4" level="project" />
+    <orderEntry type="library" name="lib" level="project" />
   </component>
 </module>
