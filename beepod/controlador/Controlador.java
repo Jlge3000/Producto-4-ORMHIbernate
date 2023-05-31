@@ -35,9 +35,24 @@ public class Controlador {
             Articulo articulo = new Articulo(codigo, descripcion, precioVenta, gastosEnvio, tiempoPreparacion);
             ArticuloDao dao = new factoryArticuloDAO();
             dao.insertar(articulo);
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Información");
+            alert.setHeaderText(null);
+            alert.setContentText("¡La operación se completó con éxito!");
+            alert.showAndWait();
         } catch (Exception e) {
-            System.out.println("Ha ocurrido un error al crear el artículo: " + e.getMessage());
+            Platform.runLater(() -> {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText(null);
+                alert.setContentText("Error en el registro."+e);
+                alert.showAndWait();
+            });
         }
+
+
+
+
     }
 
     /**
@@ -50,7 +65,13 @@ public class Controlador {
             ArticuloDao dao = new factoryArticuloDAO();
             articulos = dao.obtenerTodos();
         } catch(Exception ex) {
-            System.out.println("Error en SQL2" + ex);
+            Platform.runLater(() -> {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText(null);
+                alert.setContentText("Error en el listado"+ex);
+                alert.showAndWait();
+            });
         }
         return articulos;
     }
@@ -71,16 +92,30 @@ public class Controlador {
                 Cliente clienteNormal = new Cliente(nombre, domicilio, nif, email, "Estandard");
                 ClienteDao dao = new factoryClientesDAO();
                 dao.insertar(clienteNormal);
-                System.out.println("Cliente Estandar añadido.\n");
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Información");
+                alert.setHeaderText(null);
+                alert.setContentText("¡La operación se completó con éxito!");
+                alert.showAndWait();
             }
             if (opcion == 2 ) {
                 Cliente clientePremium = new Cliente(nombre, domicilio, nif, email, "Premium", 30, 0.2f);
                 ClienteDao dao = new factoryClientesDAO();
                 dao.insertar(clientePremium);
-                System.out.println("Cliente Premium añadido.\n");
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Información");
+                alert.setHeaderText(null);
+                alert.setContentText("¡La operación se completó con éxito!");
+                alert.showAndWait();
             }
         } catch (Exception e) {
-            System.out.println("Ha ocurrido un error al crear el cliente: " + e.getMessage());
+            Platform.runLater(() -> {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText(null);
+                alert.setContentText("Error en el registro."+e);
+                alert.showAndWait();
+            });
         }
     }
 
@@ -94,7 +129,13 @@ public class Controlador {
             ClienteDao dao = new factoryClientesDAO();
             clienteNormals = dao.obtenerTodosNormal();
         }catch(Exception ex){
-            System.out.println("Error en SQL2"+ex);
+            Platform.runLater(() -> {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText(null);
+                alert.setContentText("Error en el listado"+ex);
+                alert.showAndWait();
+            });
         }
         return clienteNormals;
     }
@@ -109,7 +150,13 @@ public class Controlador {
             ClienteDao dao = new factoryClientesDAO();
             clienteNormals = dao.obtenerTodosPremium();
         }catch(Exception ex){
-            System.out.println("Error en SQL2"+ex);
+            Platform.runLater(() -> {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText(null);
+                alert.setContentText("Error en el listado"+ex);
+                alert.showAndWait();
+            });
         }
         return clienteNormals;
     }
@@ -124,7 +171,13 @@ public class Controlador {
             ClienteDao dao = new factoryClientesDAO();
             clienteNormals = dao.obtenerTodos();
         }catch(Exception ex){
-            System.out.println("Error en SQL2"+ex);
+            Platform.runLater(() -> {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText(null);
+                alert.setContentText("Error en el listado"+ex);
+                alert.showAndWait();
+            });
         }
         return clienteNormals;
     }
@@ -139,7 +192,13 @@ public class Controlador {
             factoryPedidoDAO dao = new factoryPedidoDAO();
             pedidos = dao.obtenerTodosPendienes();
         }catch(Exception ex){
-            System.out.println("Error en SQL2"+ex);
+            Platform.runLater(() -> {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText(null);
+                alert.setContentText("Error en el listado"+ex);
+                alert.showAndWait();
+            });
         }
         return pedidos;
     }
@@ -162,6 +221,11 @@ public class Controlador {
                     Pedido pedido = new Pedido(clienteDao.obtener(email), articuloDao.obtener(codigo), cantidad);
                     factoryPedidoDAO dao = new factoryPedidoDAO();
                     dao.insertar(pedido);
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Información");
+                    alert.setHeaderText(null);
+                    alert.setContentText("¡La operación se completó con éxito!");
+                    alert.showAndWait();
                 }
                 else {
                     Platform.runLater(() -> {
@@ -204,7 +268,13 @@ public class Controlador {
             factoryPedidoDAO dao = new factoryPedidoDAO();
             pedidos = dao.obtenerPendientesCliente(email);
         }catch(Exception ex){
-            System.out.println("Error en SQL2"+ex);
+            Platform.runLater(() -> {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText(null);
+                alert.setContentText("Error en el listado"+ex);
+                alert.showAndWait();
+            });
         }
         return pedidos;
     }
@@ -219,12 +289,25 @@ public class Controlador {
             factoryPedidoDAO dao = new factoryPedidoDAO();
             if(dao.comprobarPedido(numPedido) > 0) {
                 dao.eliminar(numPedido);
+                Platform.runLater(() -> {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Información");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Pedido eliminado");
+                    alert.showAndWait();
+                });
                 return true;
             } else {
                 return false;
             }
         }catch(Exception ex){
-            System.out.println("No se ha podido eliminar el pedido, está ya enviado");
+            Platform.runLater(() -> {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText(null);
+                alert.setContentText("No se ha podido eliminar el pedido"+ex);
+                alert.showAndWait();
+            });
             return false;
         }
     }
@@ -239,7 +322,13 @@ public class Controlador {
             factoryPedidoDAO dao = new factoryPedidoDAO();
             pedidos = dao.obtenerTodosEnviados();
         }catch(Exception ex){
-            System.out.println("Error en SQL2"+ex);
+            Platform.runLater(() -> {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText(null);
+                alert.setContentText("Error en el listado"+ex);
+                alert.showAndWait();
+            });
         }
         return pedidos;
     }
@@ -255,7 +344,13 @@ public class Controlador {
             factoryPedidoDAO dao = new factoryPedidoDAO();
             pedidos = dao.obtenerEnviadosCliente(email);
         }catch(Exception ex){
-            System.out.println("Error en SQL2"+ex);
+            Platform.runLater(() -> {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText(null);
+                alert.setContentText("Error en el listado"+ex);
+                alert.showAndWait();
+            });
         }
         return pedidos;
     }
